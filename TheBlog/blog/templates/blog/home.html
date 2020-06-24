@@ -1,0 +1,49 @@
+{% extends 'blog/base.html' %}
+{% load static %}
+{% block content %}
+{% for post in posts%}
+<style>
+  .bg-custom-1 {
+  background-color: #85144b;
+}
+
+.bg-custom-2 {
+background-image: linear-gradient(15deg, #13547a 0%, #80d0c7 100%);
+}
+</style>
+    <article class="media content-section">
+        <img  class="rounded-circle article-img"  src="{{ post.author.profile.image.url }}"></img>
+          <div class="media-body">
+            <div class="article-metadata">
+              <a class="mr-2" href="{% url 'user-posts' post.author.username %}">{{ post.author }}</a>
+              <small class="text-muted">{{ post.date_posted|date:"F d, Y" }}</small>
+            </div>
+            <h2><a class="article-title" href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
+            <p class="article-content">{{ post.content }}</p>
+          </div>
+    </article>
+    {% empty %}
+    <div class="container-fluid">
+        <h3>No Posts Found having search query "{{ request.GET.q }}"</h3>
+    </div>
+<hr>
+{% endfor %}
+<ul class="pagination">
+    {% for p in posts.paginator.page_range %}
+        {% if posts.number == p %}
+            <li class="page-item active">
+                <a  href="?page={{ p }}" class="btn btn-dark mb-4">{{ p }}</a>
+                {% elif p > posts.number|add:'-3' and num < posts.number|add:'3' %}
+                <a class="btn btn-outline-dark mb-4" href="?page={{ p }}">{{ p }}</a>
+            </li>
+        {% endif %}
+    {% endfor %}
+
+    {% if posts.has_next %}
+    <li class="page-item">
+                 <a class="btn btn-outline-dark mb-4" href="?page={{ posts.next_page_number }}">Next</a>
+            <a class="btn btn-outline-dark mb-4" href="?page={{ posts.paginator.num_pages }}">Last</a>
+    </li>
+    {% endif %}
+</ul>
+{% endblock content %}
